@@ -100,5 +100,4 @@ always @(posedge clk) begin
 		endcase
 	end
 end
-
 endmodule
