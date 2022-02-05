@@ -7,7 +7,7 @@ Testbench written for transmitter and receiver separately.
 
 Future Exapansion:
 
-Add Error detection system :parity bit
+Add Error detection system : Parity bit
 
 Add baud rate in the transmitter
 
