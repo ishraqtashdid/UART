@@ -1,3 +1,5 @@
+`timescale 1ns / 10ps
+
 `include "transmitter.sv"
 
 
@@ -31,7 +33,8 @@ initial begin
 	txclk_en=1'b1;
 
 
-
+#11000;
+$stop;
 	
 	
 end
