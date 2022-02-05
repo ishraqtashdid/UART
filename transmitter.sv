@@ -1,3 +1,5 @@
+`timescale 1ns / 10ps
+
 module transmitter(input wire [7:0] din,	//input data
 		   input wire wr_en,		//Wire enable pin (allows data input)
 		   input wire clk,		//A 1GHz Clock
@@ -47,6 +49,9 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 	STATE_START: begin
 		if (clken) begin	//clock is enabled for data transmission start
 			tx <= 1'b0;	//start bit=0 (indicating the start of transmission
+			#1;	
+			$display("start bit %b",tx);			
+			#1200;
 			state <= STATE_DATA; 	// next state is data state (where data is transmitted)
 		end
 		else 	begin			//if somehow the clock is not enabled it goes back to the idle state
@@ -61,7 +66,11 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 				state <= STATE_STOP;		//the next state is made to stop state
 			else
 				bitpos <= bitpos + 3'h1;	//index position is increased
-			tx <= data[bitpos];			/* this is outside the if-else condition so gets implemented always,
+			tx <= data[bitpos];
+			$display("bit number %0d = %b",bitpos,tx);
+			#1100;
+			
+						/* this is outside the if-else condition so gets implemented always,
 								   that's why we can make the index position==7 and get away with it. */
 		end
 		else 	begin			//if somehow the clock is not enabled it goes back to the idle state
@@ -72,10 +81,14 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 	end
 	STATE_STOP: begin
 		if (clken) begin
-			tx <= 1'b1;		//stop bit is made 1
-              
+			tx <= 1'b1;
+			#1;		//stop bit is made 1
+			$display("stop bit %b",tx);
+			#1100;
+              		
           
-			state <= STATE_IDLE;	//goes back to idle state
+			state <= STATE_IDLE;
+			#1000;	//goes back to idle state
 		end
 		else 	begin			//if somehow the clock is not enabled it goes back to the idle state
 			state  <=STATE_IDLE;
