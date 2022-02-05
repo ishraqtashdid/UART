@@ -3,3 +3,10 @@ A basic UART module design using systemverilog which sends 8 bit data from a mas
 Currently does not include baud rate in the transmitter side.
 Receiver side has baud rate of 115.2kBps.
 Testbench written for transmitter and receiver separately.
+
+
+Future Exapansion:
+
+Add Error detection system :parity bit \n
+Add baud rate in the transmitter \n
+Design a complete module
