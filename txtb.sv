@@ -4,32 +4,32 @@
 
 
 module txtb();
-reg [7:0] data;
-reg clk;
-reg wire_enable;
+reg [7:0] din;
+reg txclk;
+reg wr_en;
 reg txclk_en;
 
 wire tx;
 wire tx_busy;
 
-transmitter DUT (	.din(data),
-			.clk(clk),
+transmitter DUT (	.din(din),
+			.txclk(txclk),
 			.tx(tx),
-			.wr_en(wire_enable),
-			.clken(txclk_en),
+			.wr_en(wr_en),
+			.txclken(txclk_en),
 			.tx_busy(tx_busy));
 
 
 
 initial begin
-	 forever #1 clk = ~clk;
+	 forever #1 txclk = ~txclk;
 end
 
 initial begin
 
-	clk=1'b0;
-	data= 8'b01100011;
-	wire_enable=1'b1;
+	txclk=1'b0;
+	din= 8'b01100011;
+	wr_en=1'b1;
 	txclk_en=1'b1;
 
 
