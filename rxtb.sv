@@ -6,34 +6,34 @@
 //receiver self
 `include "receiver.sv"
 
-module tb();
+module rxtb();
 	reg rx;
 	//wire rdy;
 	//reg rdy_clr;
-	reg clk;
-	reg clken;
-	wire [7:0] data;
+	reg rxclk;
+	reg rxclken;
+	wire [7:0] dout;
 
 	
 	receiver DUT (	.rx(rx),
 					//.rdy(rdy),
 					//.rdy_clr(rdy_clr),
-					.clk(clk),
-					.clken(clken),
-					.data(data));
+					.rxclk(rxclk),
+					.rxclken(rxclken),
+					.dout(dout));
 
 
 	initial begin
-	  forever #1 clk = ~clk;
+	  forever #1 rxclk = ~rxclk;
 	end
 	initial
  begin
-	  clk=1'b0;
+	  rxclk=1'b0;
 	  //rdy_clr=1'b1;
 
 	  #10;
 
-	  clken=1'b1;
+	  rxclken=1'b1;
 
 	  #10;
 
@@ -75,5 +75,4 @@ $stop;
 end
 
 endmodule
-
 
