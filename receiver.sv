@@ -1,13 +1,13 @@
 module receiver(input wire rx,
 		   //output reg rdy,
 		   //input wire rdy_clr,
-		   input wire clk,
-		   input wire clken,
-		   output reg [7:0] data);
+		   input wire rxclk,
+		   input wire rxclken,
+		   output reg [7:0] dout);
 
 initial begin
 	//rdy = 0;
-	data=8'b0;
+	dout=8'b0;
 end
 parameter CLKS_PER_BIT 		= 1085;			//clock=1GHz ; baud rate=115200x8=921600; clocks/bit=1G/921600=1085
 parameter RX_STATE_IDLE		= 2'b00;
@@ -20,17 +20,17 @@ reg [15:0] counter 	= 0;
 reg [2:0] bitpos 	= 0;
 
 
-always @(posedge clk) begin
+always @(posedge rxclk) begin
               
           
 	//if (rdy_clr)
 	//	rdy <= 0;
 
-	if (clken) begin
+	if (rxclken) begin
 	case (state)
 
 		RX_STATE_IDLE :	begin
-         		//rdy    	<= 1'b0;			//no valid data being received
+         		//rdy    	<= 1'b0;			//no valid dout being received
           		counter	<= 0;				//counter set to 0
           		bitpos	<= 0;				//index position
           
@@ -68,7 +68,7 @@ always @(posedge clk) begin
           		else begin					//when at middle sampling point
           
             			counter      <= 0;		//reset counter
-            			data[bitpos] <= rx;	//start converting to byte
+            			dout[7-bitpos] <= rx;	//start converting to byte
             
             						// Check if we have received all bits
             			if (bitpos < 7) begin
@@ -76,7 +76,7 @@ always @(posedge clk) begin
               				state  <= RX_STATE_DATA;
             			end
             			else begin
-              				bitpos <= 0;			//received all data as byte, set index=0
+              				bitpos <= 0;			//received all dout as byte, set index=0
               				state  <= RX_STATE_STOP;		//go to next state
             			end
           		end
@@ -90,6 +90,7 @@ always @(posedge clk) begin
        	    			//rdy		<= 1'b1;
             			counter 	<= 0;
             			state		<= RX_STATE_IDLE;
+				$display("Output : %b",dout);
           		end
         	end
       
