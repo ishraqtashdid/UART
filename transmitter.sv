@@ -2,8 +2,8 @@
 
 module transmitter(input wire [7:0] din,	//input data
 		   input wire wr_en,		//Wire enable pin (allows data input)
-		   input wire clk,		//A 1GHz Clock
-		   input wire clken,		//Clock enable pin
+		   input wire txclk,		//A 1GHz Clock
+		   input wire txclken,		//Clock enable pin
 		   output reg tx,		//Transmission wire
 		   output wire tx_busy);	//Transmission busy
 
@@ -20,7 +20,7 @@ reg [7:0] data = 8'h00;
 reg [2:0] bitpos = 3'h0;	//bit position index
 reg [1:0] state = STATE_IDLE;	//default state initialized with idle
 
-always @(posedge clk) begin		//positive edge triggered transmitter
+always @(posedge txclk) begin		//positive edge triggered transmitter
 	case (state)
 	
 	/*
@@ -47,7 +47,7 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 	*/
 	
 	STATE_START: begin
-		if (clken) begin	//clock is enabled for data transmission start
+		if (txclken) begin	//clock is enabled for data transmission start
 			tx <= 1'b0;	//start bit=0 (indicating the start of transmission
 			#1;	
 			$display("start bit %b",tx);			
@@ -61,7 +61,7 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 		end 
 	end	
 	STATE_DATA: begin
-		if (clken) begin
+		if (txclken) begin
 			if (bitpos == 3'h7)			//when at the last position
 				state <= STATE_STOP;		//the next state is made to stop state
 			else
@@ -80,7 +80,7 @@ always @(posedge clk) begin		//positive edge triggered transmitter
 		end 
 	end
 	STATE_STOP: begin
-		if (clken) begin
+		if (txclken) begin
 			tx <= 1'b1;
 			#1;		//stop bit is made 1
 			$display("stop bit %b",tx);
