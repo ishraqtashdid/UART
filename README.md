@@ -5,10 +5,10 @@ Receiver side has baud rate of 115.2kBps.
 Testbench written for transmitter and receiver separately.
 Baud rate for transmitter added.
 Designed a complete UART module.
-
+Testbench for the complete UART module done.
 
 Future Exapansion:
 
 Add Error detection system : Parity bit
 
-Testbench for the complete UART module.
+
