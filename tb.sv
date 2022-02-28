@@ -1,6 +1,6 @@
 `timescale 1ns / 10ps
 
-`include "uart.sv"
+//`include "uart.sv"
 `include "transmitter.sv"
 `include "receiver.sv"
 
@@ -18,7 +18,7 @@ module tb();
 		   //reg rx;
 		   //output reg rdy,
 		   //input wire rdy_clr,
-		   //reg rxclk,
+		   reg rx_busy;
 		   reg rxclken;
 		   wire [7:0] dout;
 
@@ -36,6 +36,7 @@ receiver DUT_rec (			.rx(tx),
 					//.rdy_clr(rdy_clr),
 					.rxclk(clk),
 					.rxclken(rxclken),
+					.rx_busy(rx_busy),
 					.dout(dout));	
 
 
@@ -64,3 +65,4 @@ $stop;
 end
 
 endmodule
+
