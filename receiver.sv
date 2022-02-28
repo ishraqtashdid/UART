@@ -1,5 +1,5 @@
 module receiver(input wire rx,
-		   //output reg rdy,
+		   output wire rx_busy,
 		   //input wire rdy_clr,
 		   input wire rxclk,
 		   input wire rxclken,
@@ -26,10 +26,11 @@ always @(posedge rxclk) begin
 	//if (rdy_clr)
 	//	rdy <= 0;
 
-	if (rxclken) begin
+	
 	case (state)
 
 		RX_STATE_IDLE :	begin
+		if (rxclken) begin
          		//rdy    	<= 1'b0;			//no valid dout being received
           		counter	<= 0;				//counter set to 0
           		bitpos	<= 0;				//index position
@@ -39,9 +40,13 @@ always @(posedge rxclk) begin
           		else
             			state <= RX_STATE_IDLE;
         	end
-
+		
+		else
+			state <= RX_STATE_IDLE;
+		
+		end
 		RX_STATE_START: begin
-			begin
+		if (rxclken) begin
           			if (counter > (CLKS_PER_BIT-1)/2) begin
             				if (rx == 1'b0) begin
               					counter	<= 0;  			// reset counter, found the middle
@@ -56,19 +61,27 @@ always @(posedge rxclk) begin
           			end
         		end	
 
+		else begin
+			state 	<= RX_STATE_IDLE;
+			counter 	<= 0;
+			bitpos 	<= 0;
+
+		
+		end
 		end
 		
 
 
 		RX_STATE_DATA : begin
-          		if (counter < (CLKS_PER_BIT-1)/2) begin		//until counter reaches middle sampling point
+          	if (rxclken) begin	
+			if (counter < (CLKS_PER_BIT-1)/2) begin		//until counter reaches middle sampling point
             			counter <= counter + 1; 		//increase counter
             			state   <= RX_STATE_DATA;		//stay on the current state
           		end
           		else begin					//when at middle sampling point
           
             			counter      <= 0;		//reset counter
-            			dout[7-bitpos] <= rx;	//start converting to byte
+            			dout[bitpos] <= rx;	//start converting to byte
             
             						// Check if we have received all bits
             			if (bitpos < 7) begin
@@ -80,8 +93,17 @@ always @(posedge rxclk) begin
               				state  <= RX_STATE_STOP;		//go to next state
             			end
           		end
+		end
+		else begin
+			state 	<= RX_STATE_IDLE;
+			counter 	<= 0;
+			bitpos 	<= 0;
+
+		
+		end
         	end // case: RX_STATE_DATA
       		RX_STATE_STOP : begin
+		if (rxclken) begin
           		if (counter < CLKS_PER_BIT) begin
             			counter <= counter + 1;
      	    			state   <= RX_STATE_STOP;
@@ -92,6 +114,14 @@ always @(posedge rxclk) begin
             			state		<= RX_STATE_IDLE;
 				$display("Output : %b",dout);
           		end
+		end
+		else begin
+			state 	<= RX_STATE_IDLE;
+			counter 	<= 0;
+			bitpos 	<= 0;
+
+		
+		end
         	end
       
 		
@@ -99,7 +129,10 @@ always @(posedge rxclk) begin
 			state <= RX_STATE_IDLE;
 		end
 		endcase
-	end
+	
+
 end
+
+assign rx_busy = (state != RX_STATE_IDLE);	//busy when not idle 
 
 endmodule
