@@ -13,6 +13,7 @@ module rxtb();
 	reg rxclk;
 	reg rxclken;
 	wire [7:0] dout;
+	reg rx_busy;
 
 	
 	receiver DUT (	.rx(rx),
@@ -20,6 +21,7 @@ module rxtb();
 					//.rdy_clr(rdy_clr),
 					.rxclk(rxclk),
 					.rxclken(rxclken),
+					.rx_busy(rx_busy),
 					.dout(dout));
 
 
